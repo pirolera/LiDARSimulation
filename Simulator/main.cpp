@@ -25,10 +25,11 @@ int main (int argc, char** argv)
   ifstream i( configFile );
   i >> configJSON;
 
-
+  //initialize Vehicle and Occlusions
   Vehicle vehicle( configJSON );
   Occlusions occ( configJSON.at( "structures" ) );
 
+  //run simulation
   if ( vehicle.runSimulation() < 0 )
   {
     cout << "ERROR, Simulation Failed" << endl;

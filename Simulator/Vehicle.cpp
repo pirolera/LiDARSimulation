@@ -25,10 +25,12 @@ Vehicle::Vehicle( const json& rConfigJSON ) :
   }
 }
 
+
 Vehicle::~Vehicle()
 {
   delete mpLiDARSensor;
 }
+
 
 int Vehicle::runSimulation()
 {
@@ -66,6 +68,7 @@ int Vehicle::runSimulation()
 
   return 0;
 }
+
 
 int Vehicle::computePosition( const double t, Point& rPosition )
 {
