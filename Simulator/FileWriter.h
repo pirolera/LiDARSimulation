@@ -9,11 +9,12 @@
 class FileWriter : public Writer
 {
  public:
-  FileWriter( const std::string& rFileName ) { mFileStream.open( rFileName ); }
+  FileWriter( const std::string& rFileName ) { mFileStream.open( rFileName ); mFileStream << "[" << std::endl; }
 
-  virtual ~FileWriter() { mFileStream.close(); }
+  //ToDo, remove last ,
+  virtual ~FileWriter() { mFileStream << "]" << std::endl; mFileStream.close(); }
 
-  virtual int write( const std::string& rBuffer ) { mFileStream << rBuffer << std::endl; }
+  virtual int write( const std::string& rBuffer ) { mFileStream << rBuffer << "," << std::endl; }
 
  private:
   std::ofstream mFileStream;
