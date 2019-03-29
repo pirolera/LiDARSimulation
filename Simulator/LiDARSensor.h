@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Geometry.h"
-#include "FileWriter.h"
+#include "JSONFileWriter.h"
 
 class LiDARSensor
 {
@@ -48,7 +48,7 @@ class LiDARSensor
   double mStartTime;
 
   //FileWriter where to write output JSON for each scan
-  FileWriter mFileWriter;
+  JSONFileWriter mJSONFileWriter;
 };
 
 #endif

@@ -13,7 +13,7 @@ using json = nlohmann::json;
 
 LiDARSensor::LiDARSensor( const json& rConfigJSON, const double startTime ) :
   mStartTime( startTime ),
-  mFileWriter( "output.json" ) //ToDo: make the writer parameterized instead of hard-coded
+  mJSONFileWriter( "output.json" ) //ToDo: make the writer parameterized instead of hard-coded
 {
   //get mSpinningSpeed, numBeams, elevationExtent
   double elevationExtent = rConfigJSON.at( "elevationExtent" ).get<double>();
@@ -90,6 +90,6 @@ int LiDARSensor::scan( const Point& rLocation,
   }
   output["beams"] = beams;
 
-  mFileWriter.write( output.dump() );
+  mJSONFileWriter.write( output.dump() );
   return 0;
 }
