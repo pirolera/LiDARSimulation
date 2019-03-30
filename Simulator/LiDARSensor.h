@@ -7,6 +7,9 @@
 #include "Geometry.h"
 #include "JSONFileWriter.h"
 
+/*
+ * LiDARSensor class to represent the LiDAR sensor
+ */
 class LiDARSensor
 {
  public:
@@ -41,13 +44,16 @@ class LiDARSensor
   //Vector of sensor beams 
   std::vector< Beam* > mBeams;
 
+
   //Spinning speed of the sensor
   double mSpinningSpeed;
+
 
   //Simulation start time
   double mStartTime;
 
-  //FileWriter where to write output JSON for each scan
+
+  //JSONFileWriter where to write output JSON for each scan
   JSONFileWriter mJSONFileWriter;
 };
 

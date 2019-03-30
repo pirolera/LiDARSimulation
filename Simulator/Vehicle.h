@@ -37,6 +37,7 @@ class Vehicle
    */
   int runSimulation();
 
+
  private:
 
   /*

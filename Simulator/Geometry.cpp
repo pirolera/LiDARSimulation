@@ -2,17 +2,20 @@
 
 #include <iostream>
 #include <string>
-#include <math.h>
+#include <cmath>        // std::abs
+
+#if USE_BOOST
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 #include <boost/geometry/strategies/cartesian/point_in_poly_crossings_multiply.hpp>
 
-
-using namespace std;
 typedef boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian> boost_point;
 typedef boost::geometry::model::polygon<boost_point> boost_polygon;
+#endif
+
+using namespace std;
 
 
 const Point Geometry::crossProduct( const Point& rP1, const Point& rP2 )
@@ -23,12 +26,6 @@ const Point Geometry::crossProduct( const Point& rP1, const Point& rP2 )
   result.z = rP1.x * rP2.y - rP1.y * rP2.x;
 
   return result;
-}
-
-
-double Geometry::dotProduct(const Point& rP1, const Point& rP2)
-{
-  return rP1.x * rP2.x + rP1.y * rP2.y + rP1.z * rP2.z;
 }
 
 
@@ -65,15 +62,6 @@ Point Geometry::vectorMultiply( const double scalar, const Point& rP )
 }
 
 
-double Geometry::vectorLength( const Point& rP )
-{
-  return sqrt( rP.x * rP.x + rP.y * rP.y + rP.z * rP.z );
-}
-
-
-/*
- * http://geomalgorithms.com/a05-_intersect-1.html
- */
 int Geometry::findIntersection( const AzEl& rAzEl, 
 				const Polygon& rPolygon, 
 				const Point& rLocation, 
@@ -84,7 +72,6 @@ int Geometry::findIntersection( const AzEl& rAzEl,
   beam.x = cos(rAzEl.el) * sin(rAzEl.az);
   beam.y = cos(rAzEl.el) * cos(rAzEl.az);
   beam.z = sin(rAzEl.el);
-  //cout << "\t\tBeam = " << beam.x << " " << beam.y << " " << beam.z << endl;
 
 
   /*
@@ -94,10 +81,9 @@ int Geometry::findIntersection( const AzEl& rAzEl,
   double dotProd = dotProduct( beam, rPolygon.normal );
   if ( dotProd == 0.0 )
   {
-    //return 0 because intersection point does not exist
+    //return 0 because intersection point does not exist, beam is parallel to polygon plane
     return 0;
   }
-  //cout << "\t\tdot product = " << dotProd << endl;
 
 
   /*
@@ -106,14 +92,12 @@ int Geometry::findIntersection( const AzEl& rAzEl,
        - intersection point is beamOrigin + beam * scalar
   */
   double scalar = dotProduct( rPolygon.normal, vectorSubtract( rLocation, rPolygon.points[0] ) ) / dotProd;
-  //cout << "\t\tscalar = " << scalar << endl;
   if ( scalar < 0 )
   {
     //beam is pointing the other direction of the polygon, so no intersection
     return 0;
   }
   Point intersect = vectorAdd( rLocation, vectorMultiply( scalar, beam ) );
-  cout << "\t\tPlaneIntersect " << intersect.x << " " << intersect.y << " " << intersect.z << endl;
 
 
   /*
@@ -131,6 +115,7 @@ int Geometry::findIntersection( const AzEl& rAzEl,
   return 0;
 }
 
+#if USE_BOOST
 template <typename PointType>
 void list_coordinates(PointType const& p)
 {
@@ -175,6 +160,7 @@ bool Geometry::isInsideBoost( const Point& rPoint, const Polygon& rPolygon )
 
   //return boost::geometry::intersects(p, poly); //2D works
 }
+#endif
 
 
 bool Geometry::isInside( const Point& rPoint, const Polygon& rPolygon )
@@ -208,7 +194,7 @@ bool Geometry::isInside( const Point& rPoint, const Polygon& rPolygon )
     totalAngle += angle;
   }
 
-  if ( abs( totalAngle - 2 * PI ) < epsilon )
+  if ( ::std::abs( totalAngle - 2 * PI ) < epsilon )
   {
     return true;
   }

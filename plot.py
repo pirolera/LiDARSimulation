@@ -6,6 +6,8 @@ import sys
 
 
 def plotConfig(ax, configFile):
+    '''Plot the structures and the vehicle path, as defined in the config file'''
+
     path = np.empty((0,4))
 
     with open(configFile) as json_file:  
@@ -27,6 +29,8 @@ def plotConfig(ax, configFile):
 
 
 def plotOutput(ax, outputFile):
+    ''' Plot the beam intersection points, as outputted by the simulator'''
+
     points = np.empty((0,3))
 
     with open(outputFile) as json_file:  
@@ -42,6 +46,7 @@ def plotOutput(ax, outputFile):
 
 
 def plotData(configFile, outputFile):
+    '''Create complete plot with configuration and sensor output'''
     
     fig = pyplot.figure()
     ax = Axes3D(fig)

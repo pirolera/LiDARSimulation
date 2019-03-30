@@ -15,8 +15,9 @@ Vehicle::Vehicle( const json& rConfigJSON ) :
 
   if ( parseVehiclePath( rConfigJSON ) < 0 )
   {
-    cout << "ERROR, could not parse vehicle path" << endl;
-    //ToDo: throw exception
+    string msg( "Vehicle constructor could not parse vehicle path" );
+    cerr << msg << endl;
+    throw std::runtime_error( msg );
   }
   else
   {
@@ -103,7 +104,6 @@ int Vehicle::computePosition( const double t, Point& rPosition )
 
 int Vehicle::parseVehiclePath( const json& rConfigJSON )
 {
-  //ToDo: implement
   const auto vehiclePath = rConfigJSON.at( "vehiclePath" );
 
   //ToDo: verify entries are in increasing time order

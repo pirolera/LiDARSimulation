@@ -1,5 +1,6 @@
 #include "Occlusions.h"
 #include <iostream>
+#include <stdexcept>
 
 using namespace std;
 using json = nlohmann::json;
@@ -8,7 +9,11 @@ std::vector<Polygon> Occlusions::mPolygons;
 
 Occlusions::Occlusions( const json& rConfigJSON )
 {
-  //ToDo: add exception in case construction is called more than once
+  //Don't do anything if construction is called more than once
+  if ( mPolygons.size() > 0 )
+  {
+    return;
+  }
 
   for ( auto& polEntry : rConfigJSON )
   {
