@@ -23,7 +23,7 @@ def plotConfig(ax, configFile):
             polygon = np.append(polygon, np.array([polygon[0,:]]), axis=0)
             ax.plot(polygon[:,0], polygon[:,1], polygon[:,2])
 
-    ax.plot(path[:,1], path[:,2], path[:,3])
+    ax.plot(path[:,1], path[:,2], path[:,3], 'r-*')
 
 
 def plotOutput(ax, outputFile):

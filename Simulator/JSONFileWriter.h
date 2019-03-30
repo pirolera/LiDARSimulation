@@ -9,15 +9,16 @@
 class JSONFileWriter : public Writer
 {
  public:
-  JSONFileWriter( const std::string& rFileName ) { mFileStream.open( rFileName ); mFileStream << "[" << std::endl; }
+  JSONFileWriter( const std::string& rFileName );
 
-  //ToDo, remove last ,
-  virtual ~JSONFileWriter() { mFileStream << "]" << std::endl; mFileStream.close(); }
+  virtual ~JSONFileWriter() { mFileStream << std::endl << "]" << std::endl; mFileStream.close(); }
 
-  virtual int write( const std::string& rBuffer ) { mFileStream << rBuffer << "," << std::endl; }
+  virtual int write( const std::string& rBuffer );
 
  private:
   std::ofstream mFileStream;
+
+  bool mHasData;
 
 };
 
