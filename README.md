@@ -1,6 +1,5 @@
 # LiDARSimulation
 
-## Description
 LiDARSimulation is a simulator of a LiDAR (Light Detection and Ranging) sensor for a static environment. The environment (vehicle path, sensor configuration, and stuctures/occlusions) are defined in a configuration file (examples in Config folder).
 ![Output Plot](./Config/SimConfigComplex.png)
 The output of the program for the Config/SimConfigComplex.json configuration file is shown in the 3D figure above. The vehicle path is shown with a red line in the middle of the environment, with the vehicle moving from south-west to north-east. The environment contains three structures: a box shape in the south-eastern part of the scene, a box shape in the north-western part of the scene, and a pyramid in the north-eastern part of the scene. 
