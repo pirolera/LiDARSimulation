@@ -59,9 +59,8 @@ class Vehicle
   int parseVehiclePath( const nlohmann::json& rConfigJSON );
 
 
-  //Path of the vehicle as defined in the config file
-  //ToDo: change vector to map<t, Point>
-  std::vector< std::vector< double > > mVehiclePath;
+  //Path of the vehicle as defined in the config file. Key is timestamp, value is location
+  std::map< double, Point > mVehiclePath;
 
 
   //Duration of time tick for the simulation
@@ -72,9 +71,10 @@ class Vehicle
   LiDARSensor* mpLiDARSensor;
 
 
-  //Index in mVehiclePath representing the waypoint with larger timestamp than current simulation time
-  //Used by computePosition function to determine waypoint before and after the current time
-  int mLargerTimestampIndex;
+  //Iterators in mVehiclePath representing the waypoint with smaller and larger timestamp 
+  //than current simulation time. Used by computePosition function to determine current location
+  std::map< double, Point >::const_iterator mPrevIterator;
+  std::map< double, Point >::const_iterator mPostIterator;
 
 };
 
