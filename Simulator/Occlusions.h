@@ -25,12 +25,12 @@ class Occlusions
    *
    * @return Vector of Polygon objects representing structures in the config file
    */
-  static const std::vector<Polygon>&  getOcclusions();
+  static const std::vector< std::shared_ptr<Polygon> >&  getOcclusions();
 
  private:
 
   //Vector of Polygon objects representing structures in the config file
-  static std::vector<Polygon> mPolygons;
+  static std::vector< std::shared_ptr<Polygon> > mPolygons;
 };
 
 #endif

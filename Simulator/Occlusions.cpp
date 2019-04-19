@@ -5,7 +5,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-std::vector<Polygon> Occlusions::mPolygons;
+std::vector< std::shared_ptr<Polygon> > Occlusions::mPolygons;
 
 Occlusions::Occlusions( const json& rConfigJSON )
 {
@@ -17,26 +17,26 @@ Occlusions::Occlusions( const json& rConfigJSON )
 
   for ( auto& polEntry : rConfigJSON )
   {
-    Polygon pol;
+    shared_ptr<Polygon> pol( new Polygon );
     for ( auto& pointEntry : polEntry )
     {
-      Point point;
-      point.x = pointEntry.at("x");
-      point.y = pointEntry.at("y");
-      point.z = pointEntry.at("z");
-      pol.points.push_back( point );
+      shared_ptr<Point> point( new Point );
+      point->x = pointEntry.at("x");
+      point->y = pointEntry.at("y");
+      point->z = pointEntry.at("z");
+      pol->points.push_back( point );
     }
 
     //Compute normal vector of the plane where the polygon resides
     //This is the cross product of two vectors from the edges of the polygon
-    pol.normal = Geometry::crossProduct( Geometry::vectorSubtract( pol.points[0], pol.points[1] ), 
-					 Geometry::vectorSubtract( pol.points[1], pol.points[2] ) );
+    pol->normal = Geometry::crossProduct( Geometry::vectorSubtract( pol->points[0], pol->points[1] ), 
+					                                Geometry::vectorSubtract( pol->points[1], pol->points[2] ) );
 
     mPolygons.push_back( pol );
   }
 }
 
-const vector<Polygon>&  Occlusions::getOcclusions()
+const vector< shared_ptr<Polygon> >&  Occlusions::getOcclusions()
 {
   return mPolygons;
 }

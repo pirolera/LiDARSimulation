@@ -43,7 +43,7 @@ int Vehicle::runSimulation()
   double startTime = mVehiclePath.begin()->first;
   double endTime = mVehiclePath.rbegin()->first;
 
-  Point position;
+  shared_ptr<Point> position( new Point );
   for ( double t = startTime; t < endTime; t += mTimeTick )
   {
     if ( computePosition( t, position ) < 0 )
@@ -51,7 +51,7 @@ int Vehicle::runSimulation()
       cout << "ERROR, could not compute position" << endl;
       return -1;
     }
-    cout << "----cp---" << t << " " << position.x << " " << position.y << " " << position.z << endl;
+    cout << "----cp---" << t << " " << position->x << " " << position->y << " " << position->z << endl;
 
     if ( mpLiDARSensor->scan( position, t ) < 0 )
     {
@@ -61,10 +61,10 @@ int Vehicle::runSimulation()
   }
 
   //run for the last timestamp in the path
-  position.x = mVehiclePath.rbegin()->second.x;
-  position.y = mVehiclePath.rbegin()->second.y;
-  position.z = mVehiclePath.rbegin()->second.z;
-  cout << "----last---" << endTime << " " << position.x << " " << position.y << " " << position.z << endl;
+  position->x = mVehiclePath.rbegin()->second.x;
+  position->y = mVehiclePath.rbegin()->second.y;
+  position->z = mVehiclePath.rbegin()->second.z;
+  cout << "----last---" << endTime << " " << position->x << " " << position->y << " " << position->z << endl;
 
   if ( mpLiDARSensor->scan( position, endTime ) < 0 )
   {
@@ -76,13 +76,19 @@ int Vehicle::runSimulation()
 }
 
 
-int Vehicle::computePosition( const double t, Point& rPosition )
+int Vehicle::computePosition( const double t, shared_ptr<Point> pPosition )
 {
+  if ( !pPosition )
+  {
+    cerr << "ERROR, null object passed to Vehicle::computePosition" << endl;
+    return -1;
+  }
+
   if ( t >= mPostIterator->first )
   {
     if ( mPostIterator == mVehiclePath.end() )
     {
-      cout << "ERROR, the computePosition function is called incorrectly" << endl;
+      cerr << "ERROR, the computePosition function is called incorrectly" << endl;
       return -1;
     }
     mPrevIterator = mPostIterator;
@@ -96,9 +102,9 @@ int Vehicle::computePosition( const double t, Point& rPosition )
   double deltaY = mPostIterator->second.y - mPrevIterator->second.y;
   double deltaZ = mPostIterator->second.z - mPrevIterator->second.z;
 
-  rPosition.x = mPrevIterator->second.x + deltaX * timeRatio;
-  rPosition.y = mPrevIterator->second.y + deltaY * timeRatio;
-  rPosition.z = mPrevIterator->second.z + deltaZ * timeRatio;
+  pPosition->x = mPrevIterator->second.x + deltaX * timeRatio;
+  pPosition->y = mPrevIterator->second.y + deltaY * timeRatio;
+  pPosition->z = mPrevIterator->second.z + deltaZ * timeRatio;
 
   return 0;
 }

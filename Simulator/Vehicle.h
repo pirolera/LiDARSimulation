@@ -47,7 +47,7 @@ class Vehicle
    * @param rPosition The return object with the position of the vehicle at time t
    * @return Negative number if error occurs, 0 otherwise
    */
-  int computePosition( const double t, Point& rPosition );
+  int computePosition( const double t, std::shared_ptr<Point> pPosition );
 
 
   /*

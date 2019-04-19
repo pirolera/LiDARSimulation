@@ -35,9 +35,9 @@ class Beam
    * @param pIntersectPoint Returned intersection point of the beam with any structures in the scene
    * @return Negative number if error occurs, 0 otherwise
    */
-  int scan( const Point& rLocation, 
+  int scan( const std::shared_ptr<Point> pLocation, 
 	    const double azimuth,
-	    AzEl& rBeamAzEl,
+	    std::shared_ptr<AzEl> pBeamAzEl,
 	    Point*& pIntersectPoint );
 
  private:

@@ -18,67 +18,70 @@ typedef boost::geometry::model::polygon<boost_point> boost_polygon;
 using namespace std;
 
 
-const Point Geometry::crossProduct( const Point& rP1, const Point& rP2 )
+const shared_ptr<Point> Geometry::crossProduct( const shared_ptr<Point> pP1, 
+                                                const shared_ptr<Point> pP2 )
 {
-  Point result;
-  result.x = rP1.y * rP2.z - rP1.z * rP2.y;
-  result.y = rP1.z * rP2.x - rP1.x * rP2.z;
-  result.z = rP1.x * rP2.y - rP1.y * rP2.x;
+  shared_ptr<Point> result( new Point);
+  result->x = pP1->y * pP2->z - pP1->z * pP2->y;
+  result->y = pP1->z * pP2->x - pP1->x * pP2->z;
+  result->z = pP1->x * pP2->y - pP1->y * pP2->x;
 
   return result;
 }
 
 
-Point Geometry::vectorSubtract( const Point& rP1, const Point& rP2 )
+const shared_ptr<Point> Geometry::vectorSubtract( const shared_ptr<Point> pP1, 
+                                                  const shared_ptr<Point> pP2 )
 {
-  Point result;
-  result.x = rP2.x - rP1.x;
-  result.y = rP2.y - rP1.y;
-  result.z = rP2.z - rP1.z;
+  shared_ptr<Point> result( new Point);
+  result->x = pP2->x - pP1->x;
+  result->y = pP2->y - pP1->y;
+  result->z = pP2->z - pP1->z;
 
   return result;
 }
 
 
-Point Geometry::vectorAdd( const Point& rP1, const Point& rP2 )
+const shared_ptr<Point> Geometry::vectorAdd( const shared_ptr<Point> pP1, 
+                                             const shared_ptr<Point> pP2 )
 {
-  Point result;
-  result.x = rP2.x + rP1.x;
-  result.y = rP2.y + rP1.y;
-  result.z = rP2.z + rP1.z;
+  shared_ptr<Point> result( new Point);
+  result->x = pP2->x + pP1->x;
+  result->y = pP2->y + pP1->y;
+  result->z = pP2->z + pP1->z;
 
   return result;
 }
 
 
-Point Geometry::vectorMultiply( const double scalar, const Point& rP )
+const shared_ptr<Point> Geometry::vectorMultiply( const double scalar, const shared_ptr<Point> pPoint )
 {
-  Point result;
-  result.x = scalar * rP.x;
-  result.y = scalar * rP.y;
-  result.z = scalar * rP.z;
+  shared_ptr<Point> result( new Point);
+  result->x = scalar * pPoint->x;
+  result->y = scalar * pPoint->y;
+  result->z = scalar * pPoint->z;
 
   return result;
 }
 
 
-int Geometry::findIntersection( const AzEl& rAzEl, 
-				const Polygon& rPolygon, 
-				const Point& rLocation, 
-				Point& rIntersectPoint )
+int Geometry::findIntersection( const shared_ptr<AzEl> pAzEl, 
+				const shared_ptr<Polygon> pPolygon, 
+				const shared_ptr<Point> pLocation, 
+				shared_ptr<Point> rIntersectPoint )
 {
   //convert rAzEl into a 3D vector representing the unit vector in the rAzEl direction
-  Point beam;
-  beam.x = cos(rAzEl.el) * sin(rAzEl.az);
-  beam.y = cos(rAzEl.el) * cos(rAzEl.az);
-  beam.z = sin(rAzEl.el);
+  shared_ptr<Point> beam( new Point);
+  beam->x = cos(pAzEl->el) * sin(pAzEl->az);
+  beam->y = cos(pAzEl->el) * cos(pAzEl->az);
+  beam->z = sin(pAzEl->el);
 
 
   /*
     1) Compute dot product of normal vector and beam vector
        If result is 0, beam and normal are perpendicular so no intersection between beam and polygon
   */
-  double dotProd = dotProduct( beam, rPolygon.normal );
+  double dotProd = dotProduct( beam, pPolygon->normal );
   if ( dotProd == 0.0 )
   {
     //return 0 because intersection point does not exist, beam is parallel to polygon plane
@@ -91,23 +94,24 @@ int Geometry::findIntersection( const AzEl& rAzEl,
        - Compute beam scalar
        - intersection point is beamOrigin + beam * scalar
   */
-  double scalar = dotProduct( rPolygon.normal, vectorSubtract( rLocation, rPolygon.points[0] ) ) / dotProd;
+  double scalar = dotProduct( pPolygon->normal, 
+                              vectorSubtract( pLocation, pPolygon->points[0] ) ) / dotProd;
   if ( scalar < 0 )
   {
     //beam is pointing the other direction of the polygon, so no intersection
     return 0;
   }
-  Point intersect = vectorAdd( rLocation, vectorMultiply( scalar, beam ) );
+  const shared_ptr<Point> intersect = vectorAdd( pLocation, vectorMultiply( scalar, beam ) );
 
 
   /*
     3) Check if intersection point is inside the polygon
   */
-  if ( isInside( intersect, rPolygon ) )
+  if ( isInside( intersect, pPolygon ) )
   {
-    rIntersectPoint.x = intersect.x;
-    rIntersectPoint.y = intersect.y;
-    rIntersectPoint.z = intersect.z;
+    rIntersectPoint->x = intersect->x;
+    rIntersectPoint->y = intersect->y;
+    rIntersectPoint->z = intersect->z;
     return 1;
   }
 
@@ -163,18 +167,18 @@ bool Geometry::isInsideBoost( const Point& rPoint, const Polygon& rPolygon )
 #endif
 
 
-bool Geometry::isInside( const Point& rPoint, const Polygon& rPolygon )
+bool Geometry::isInside( const shared_ptr<Point> pPoint, const shared_ptr<Polygon> pPolygon )
 {
   double epsilon = 0.000001;
-  int i, size = rPolygon.points.size();
+  int i, size = pPolygon->points.size();
 
   double totalAngle = 0;
   for ( i = 0; i < size; i++ )
   {
-    Point v1 = rPolygon.points[i];
-    Point v2 = rPolygon.points[(i+1) % size]; //use the first vertex if v1 is the last vertex
-    Point vec1 = vectorSubtract( rPoint, v1 );
-    Point vec2 = vectorSubtract( rPoint, v2 );
+    shared_ptr<Point> v1 = pPolygon->points[i];
+    shared_ptr<Point> v2 = pPolygon->points[(i+1) % size]; //use the first vertex if v1 is the last vertex
+    shared_ptr<Point> vec1 = vectorSubtract( pPoint, v1 );
+    shared_ptr<Point> vec2 = vectorSubtract( pPoint, v2 );
     double len1 = vectorLength( vec1 );
     double len2 = vectorLength( vec2 );
 

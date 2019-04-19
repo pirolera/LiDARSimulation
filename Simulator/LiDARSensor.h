@@ -26,7 +26,7 @@ class LiDARSensor
   /*
    * Destructor for the LiDARSensor class
    */
-  ~LiDARSensor();
+  ~LiDARSensor() { }
 
 
   /*
@@ -36,13 +36,13 @@ class LiDARSensor
    * @param time Current time
    * @return Negative number if error occurs, 0 otherwise
    */
-  int scan( const Point& rLocation, 
-	    const double time );
+  int scan( const std::shared_ptr<Point> pLocation, 
+	          const double time );
 
  private:
 
   //Vector of sensor beams 
-  std::vector< Beam* > mBeams;
+  std::vector< std::shared_ptr<Beam> > mBeams;
 
 
   //Spinning speed of the sensor

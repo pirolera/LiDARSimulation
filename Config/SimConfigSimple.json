@@ -1,5 +1,5 @@
 {
-  "timeTick" : 0.3,
+  "timeTick" : 0.2,
   "sensor" :
   {
     "numBeams" : 3,

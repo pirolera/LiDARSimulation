@@ -19,24 +19,24 @@ Beam::~Beam()
 
 }
 
-int Beam::scan( const Point& rLocation, 
+int Beam::scan( const shared_ptr<Point> pLocation, 
 		const double azimuth,
-		AzEl& rBeamAzEl,
+		shared_ptr<AzEl> rBeamAzEl,
 		Point*& pIntersectPoint )
 {
   cout << "\tScanning " << azimuth * 180 / Geometry::PI 
        << " " << mElevationAngle  * 180 / Geometry::PI << endl;
 
-  rBeamAzEl.az = azimuth;
-  rBeamAzEl.el = mElevationAngle;
+  rBeamAzEl->az = azimuth;
+  rBeamAzEl->el = mElevationAngle;
   
-  Point closestIntersectPoint;
+  shared_ptr<Point> closestIntersectPoint;
   double distance = -1.0;
-  const vector<Polygon>& polygons = Occlusions::getOcclusions();
-  for ( const Polygon polygon : polygons )
+  const vector< shared_ptr<Polygon> >& polygons = Occlusions::getOcclusions();
+  for ( const shared_ptr<Polygon> polygon : polygons )
   {
-    Point intersectPoint;
-    int ret = Geometry::findIntersection( rBeamAzEl, polygon, rLocation, intersectPoint );
+    shared_ptr<Point> intersectPoint( new Point );
+    int ret = Geometry::findIntersection( rBeamAzEl, polygon, pLocation, intersectPoint );
     if ( ret < 0 )
     {
       cout << "WARNING, findIntersection did not work" << endl;
@@ -49,10 +49,11 @@ int Beam::scan( const Point& rLocation,
       continue;
     }
 
-    cout << "\t\t\t------PolygonIntersection at " << intersectPoint.x << " " << intersectPoint.y << " " << intersectPoint.z << endl;
+    cout << "\t\t\t------PolygonIntersection at " << intersectPoint->x << " " 
+         << intersectPoint->y << " " << intersectPoint->z << endl;
 
     //keep the closest intersection point if there are many
-    double newDistance = Geometry::vectorLength( Geometry::vectorSubtract( rLocation, intersectPoint ) );
+    double newDistance = Geometry::vectorLength( Geometry::vectorSubtract( pLocation, intersectPoint ) );
     if ( distance < 0 || distance > newDistance )
     {
       closestIntersectPoint = intersectPoint;
@@ -64,9 +65,9 @@ int Beam::scan( const Point& rLocation,
   if ( distance >= 0 )
   {
     pIntersectPoint = new Point;
-    pIntersectPoint->x = closestIntersectPoint.x;
-    pIntersectPoint->y = closestIntersectPoint.y;
-    pIntersectPoint->z = closestIntersectPoint.z;
+    pIntersectPoint->x = closestIntersectPoint->x;
+    pIntersectPoint->y = closestIntersectPoint->y;
+    pIntersectPoint->z = closestIntersectPoint->z;
   }
 
   return 0;

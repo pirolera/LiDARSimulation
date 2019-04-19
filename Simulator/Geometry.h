@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <math.h>
-
+#include <memory>
 
 //do not use Boost to determine if point is inside a polygon
 #define USE_BOOST false
@@ -27,8 +27,8 @@ struct AzEl
 //Struct to represent a polygon; contains list of vertices and a normal vector
 struct Polygon
 {
-  std::vector<Point> points;
-  Point normal;
+  std::vector< std::shared_ptr<Point> > points;
+  std::shared_ptr<Point> normal;
 };
 
 
@@ -42,60 +42,66 @@ class Geometry
   /*
    * Compute cross product of two vectors
    *
-   * @param rP1 First vector
-   * @param rP2 Second vector
+   * @param pP1 First vector
+   * @param pP2 Second vector
    * @return Vector representing cross product of the two input vectors
    */
-  static const Point crossProduct( const Point& rP1, const Point& rP2 );
+  static const std::shared_ptr<Point> crossProduct( const std::shared_ptr<Point> pP1, 
+                                                    const std::shared_ptr<Point> pP2 );
   
 
   /*
    * Compute dot product of two vectors
    *
-   * @param rP1 First vector
-   * @param rP2 Second vector
+   * @param pP1 First vector
+   * @param pP2 Second vector
    * @return Double representing dot product value of the two input vectors
    */
-  static double dotProduct(const Point& rP1, const Point& rP2) { return rP1.x * rP2.x + rP1.y * rP2.y + rP1.z * rP2.z; }
+  static double dotProduct(const std::shared_ptr<Point> pP1, const std::shared_ptr<Point> pP2) 
+  { return pP1->x * pP2->x + pP1->y * pP2->y + pP1->z * pP2->z; }
 
 
   /*
    * Compute subtraction of two vectors/points (rP2 - rP1)
    *
-   * @param rP1 First vector/point
-   * @param rP2 Second vector/point
-   * @return Vector/point representing rP2 - rP1
+   * @param pP1 First vector/point
+   * @param pP2 Second vector/point
+   * @return Vector/point representing pP2 - pP1
    */
-  static Point vectorSubtract( const Point& rP1, const Point& rP2 );
+  static const std::shared_ptr<Point> vectorSubtract( const std::shared_ptr<Point> pP1, 
+                                                      const std::shared_ptr<Point> pP2 );
 
 
   /*
    * Compute addition of two vectors/points
    *
-   * @param rP1 First vector/point
-   * @param rP2 Second vector/point
-   * @return Vector/point representing rP1 + rP2
+   * @param pP1 First vector/point
+   * @param pP2 Second vector/point
+   * @return Vector/point representing pP1 + pP2
    */
-  static Point vectorAdd( const Point& rP1, const Point& rP2 );
+  static const std::shared_ptr<Point> vectorAdd( const std::shared_ptr<Point> pP1, 
+                                                 const std::shared_ptr<Point> pP2 );
 
 
   /*
    * Compute multiplication of vector/point with scalar
    *
    * @param scalar Scalar value to multiply the vector/point with
-   * @param rP Vector/point
-   * @return Vector/point representing scalar * rP
+   * @param pPoint Vector/point
+   * @return Vector/point representing scalar * pPoint
    */
-  static Point vectorMultiply( const double scalar, const Point& rP );
+  static const std::shared_ptr<Point> vectorMultiply( const double scalar, 
+                                                      const std::shared_ptr<Point> pPoint );
 
 
   /*
    * Compute length of a vector
    *
-   * @param rP Input vector for which to compute the length
+   * @param pPoint Input vector for which to compute the length
    * @return Length of input vector
    */
-  static double vectorLength( const Point& rP ) { return sqrt( rP.x * rP.x + rP.y * rP.y + rP.z * rP.z ); }
+  static double vectorLength( const std::shared_ptr<Point> pPoint ) 
+  { return sqrt( pPoint->x * pPoint->x + pPoint->y * pPoint->y + pPoint->z * pPoint->z ); }
 
 
   /*
@@ -108,31 +114,32 @@ class Geometry
    * @return Negative number if error occurs, 0 is code runs successful but there is no intersection,
    *         positive number if intersection found and rIntersectPoint is populated
    */
-  static int findIntersection( const AzEl& rAzEl, 
-			       const Polygon& rPolygon,
-			       const Point& rLocation,
-			       Point& rIntersectPoint );
+  static int findIntersection( const std::shared_ptr<AzEl> pAzEl, 
+			       const std::shared_ptr<Polygon> pPolygon,
+			       const std::shared_ptr<Point> pLocation,
+			       std::shared_ptr<Point> pIntersectPoint );
 
 #if USE_BOOST
 
   /*
    * Check if 3D point is inside a polygon (this function does not work in 3D)
    *
-   * @param rPoint Point definition
-   * @param rPolygon Polygon definition
+   * @param pPoint Point definition
+   * @param pPolygon Polygon definition
    * @return True if point is inside polygon, false otherwise
    */
-  static bool isInsideBoost( const Point& rPoint, const Polygon& rPolygon );
+  static bool isInsideBoost( const std::shared_ptr<Point> pPoint, 
+                             const std::shared_ptr<Polygon> pPolygon );
 #endif
 
   /*
    * Check if 3D point is inside a polygon
    *
-   * @param rPoint Point definition
-   * @param rPolygon Polygon definition
+   * @param pPoint Point definition
+   * @param pPolygon Polygon definition
    * @return True if point is inside polygon, false otherwise
    */
-  static bool isInside( const Point& rPoint, const Polygon& rPolygon );
+  static bool isInside( const std::shared_ptr<Point> pPoint, const std::shared_ptr<Polygon> pPolygon );
 
 
   // Definition of pi value

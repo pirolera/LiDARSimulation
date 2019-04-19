@@ -16,9 +16,8 @@ The codebase has an external dependency to https://github.com/nlohmann/json and 
 
 ## ToDo List
 1. CMake build system
-2. Update code to use smart pointers
-3. Unit tests
-4. Improve scalability
+2. Unit tests
+3. Improve scalability
    * Be selective of which polygons are considered for intersection in each scan
    * Multi-thread Beam.scan calls
-5. Create real-time visualizer
+4. Create real-time visualizer
