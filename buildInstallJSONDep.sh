@@ -13,4 +13,4 @@ fi
 
 cd build/
 cmake ../
-make -j install
+make install
