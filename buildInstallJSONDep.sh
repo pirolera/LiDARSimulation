@@ -6,7 +6,7 @@ then
 fi
 
 cd json/
-if [ ! -d build]
+if [ ! -d build ]
 then
   mkdir build
 fi
