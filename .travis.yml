@@ -2,5 +2,5 @@ dist: trusty
 sudo: required
 language: cpp
 script:
-  - sudo ./buildInstallJSONDep.sh
+  - ./buildInstallJSONDep.sh
   - ./build.sh
