@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/pirolera/LiDARSimulation.svg?branch=master)](https://travis-ci.org/pirolera/LiDARSimulation)
 # LiDARSimulation
 
 LiDARSimulation is a simulator of a LiDAR (Light Detection and Ranging) sensor for a static environment. The environment (vehicle path, sensor configuration, and stuctures/occlusions) are defined in a configuration file (examples in Config folder).
