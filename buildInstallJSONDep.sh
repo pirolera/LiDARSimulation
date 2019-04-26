@@ -13,4 +13,4 @@ fi
 
 cd build/
 cmake ../
-make install
+make -j2 install
